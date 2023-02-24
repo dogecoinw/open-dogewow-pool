@@ -221,14 +221,7 @@ func (u *PayoutsProcessor) process() {
 
 		var data []byte
 		tx := types.NewTransaction(nonce, common.HexToAddress(login), amountInWei, gasLimit, gasPrice, data)
-		chainID, err := u.rpc.ChainID(context.TODO())
-		if err != nil {
-			log.Printf("ChainID")
-			u.halt = true
-			u.lastFail = err
-			break
-		}
-		signedTx, err := types.SignTx(tx, types.NewLondonSigner(chainID), u.privateKey)
+		signedTx, err := types.SignTx(tx, types.NewLondonSigner(big.NewInt(22550)), u.privateKey)
 		if err != nil {
 			log.Printf("SignTx")
 			u.halt = true
