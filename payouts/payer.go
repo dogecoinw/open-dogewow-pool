@@ -18,8 +18,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/sammy007/open-ethereum-pool/storage"
-	"github.com/sammy007/open-ethereum-pool/util"
+	"github.com/dogecoinw/open-dogewow-pool/storage"
+	"github.com/dogecoinw/open-dogewow-pool/util"
 )
 
 const txCheckInterval = 5 * time.Second

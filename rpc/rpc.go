@@ -13,7 +13,7 @@ import (
 	"sync"
 
 	"github.com/dogecoinw/go-dogecoin/common"
-	"github.com/sammy007/open-ethereum-pool/util"
+	"github.com/dogecoinw/open-dogewow-pool/util"
 )
 
 type RPCClient struct {

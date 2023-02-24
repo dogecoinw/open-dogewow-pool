@@ -9,8 +9,8 @@ import (
 
 	"github.com/dogecoinw/go-dogecoin/common"
 
-	"github.com/sammy007/open-ethereum-pool/rpc"
-	"github.com/sammy007/open-ethereum-pool/util"
+	"github.com/dogecoinw/open-dogewow-pool/rpc"
+	"github.com/dogecoinw/open-dogewow-pool/util"
 )
 
 const maxBacklog = 3

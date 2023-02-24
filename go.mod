@@ -1,6 +1,6 @@
-module github.com/sammy007/open-ethereum-pool
+module github.com/dogecoinw/open-dogewow-pool
 
-go 1.19
+go 1.18
 
 require (
 	github.com/dogecoinw/ethash v1.0.0

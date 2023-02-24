@@ -10,9 +10,9 @@ import (
 
 	"github.com/dogecoinw/go-dogecoin/common/math"
 
-	"github.com/sammy007/open-ethereum-pool/rpc"
-	"github.com/sammy007/open-ethereum-pool/storage"
-	"github.com/sammy007/open-ethereum-pool/util"
+	"github.com/dogecoinw/open-dogewow-pool/rpc"
+	"github.com/dogecoinw/open-dogewow-pool/storage"
+	"github.com/dogecoinw/open-dogewow-pool/util"
 )
 
 type UnlockerConfig struct {
