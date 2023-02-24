@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/FranckStone/ethash v0.0.2
-	github.com/ethereumfair/go-ethereum v1.0.5
+	github.com/dogecoinw/go-dogecoin v1.0.1
 	github.com/gorilla/mux v1.8.0
 	github.com/yvasiyarov/gorelic v0.0.7
 	gopkg.in/redis.v3 v3.6.4
@@ -15,6 +15,7 @@ require (
 	github.com/btcsuite/btcd/btcec/v2 v2.2.0 // indirect
 	github.com/deckarep/golang-set v1.8.0 // indirect
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.0.1 // indirect
+	github.com/ethereumfair/go-ethereum v1.0.5 // indirect
 	github.com/garyburd/redigo v1.6.4 // indirect
 	github.com/go-ole/go-ole v1.2.1 // indirect
 	github.com/go-stack/stack v1.8.0 // indirect

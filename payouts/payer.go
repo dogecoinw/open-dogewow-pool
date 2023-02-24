@@ -4,13 +4,13 @@ import (
 	"context"
 	"crypto/ecdsa"
 	"fmt"
-	"github.com/ethereumfair/go-ethereum/accounts/keystore"
-	"github.com/ethereumfair/go-ethereum/common"
-	"github.com/ethereumfair/go-ethereum/common/hexutil"
-	"github.com/ethereumfair/go-ethereum/console/prompt"
-	"github.com/ethereumfair/go-ethereum/core/types"
-	"github.com/ethereumfair/go-ethereum/crypto"
-	"github.com/ethereumfair/go-ethereum/ethclient"
+	"github.com/dogecoinw/go-dogecoin/accounts/keystore"
+	"github.com/dogecoinw/go-dogecoin/common"
+	"github.com/dogecoinw/go-dogecoin/common/hexutil"
+	"github.com/dogecoinw/go-dogecoin/console/prompt"
+	"github.com/dogecoinw/go-dogecoin/core/types"
+	"github.com/dogecoinw/go-dogecoin/crypto"
+	"github.com/dogecoinw/go-dogecoin/ethclient"
 	"io/ioutil"
 	"log"
 	"math/big"
@@ -221,7 +221,14 @@ func (u *PayoutsProcessor) process() {
 
 		var data []byte
 		tx := types.NewTransaction(nonce, common.HexToAddress(login), amountInWei, gasLimit, gasPrice, data)
-		signedTx, err := types.SignTx(tx, types.NewEIP155Signer(big.NewInt(1337)), u.privateKey)
+		chainID, err := u.rpc.ChainID(context.TODO())
+		if err != nil {
+			log.Printf("ChainID")
+			u.halt = true
+			u.lastFail = err
+			break
+		}
+		signedTx, err := types.SignTx(tx, types.NewLondonSigner(chainID), u.privateKey)
 		if err != nil {
 			log.Printf("SignTx")
 			u.halt = true
