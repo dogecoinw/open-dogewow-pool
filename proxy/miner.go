@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/FranckStone/ethash"
+	"github.com/dogecoinw/ethash"
 	"github.com/dogecoinw/go-dogecoin/common"
 )
 
