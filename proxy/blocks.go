@@ -1,6 +1,7 @@
 package proxy
 
 import (
+	"fmt"
 	"log"
 	"math/big"
 	"strconv"
@@ -65,7 +66,8 @@ func (s *ProxyServer) fetchBlockTemplate() {
 	}
 
 	pendingReply.Difficulty = util.ToHex(s.config.Proxy.Difficulty)
-
+	height = height + uint64(5310000)
+	pendingReply.Number = fmt.Sprintf("0x%x", height)
 	newTemplate := BlockTemplate{
 		Header:               reply[0],
 		Seed:                 reply[1],
