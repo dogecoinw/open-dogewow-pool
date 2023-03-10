@@ -66,7 +66,9 @@ func (s *ProxyServer) fetchBlockTemplate() {
 	}
 
 	pendingReply.Difficulty = util.ToHex(s.config.Proxy.Difficulty)
-	height = height + uint64(5310000)
+	if height > 110000 {
+		height = height + uint64(4000000)
+	}
 	pendingReply.Number = fmt.Sprintf("0x%x", height)
 	newTemplate := BlockTemplate{
 		Header:               reply[0],

@@ -6,6 +6,7 @@ require (
 	github.com/dogecoinw/ethash v1.0.0
 	github.com/dogecoinw/go-dogecoin v1.0.1
 	github.com/gorilla/mux v1.8.0
+	github.com/sammy007/open-ethereum-pool v0.0.0-20171111114927-bcfc0eb0e683
 	github.com/yvasiyarov/gorelic v0.0.7
 	gopkg.in/redis.v3 v3.6.4
 )
@@ -15,6 +16,7 @@ require (
 	github.com/btcsuite/btcd/btcec/v2 v2.2.0 // indirect
 	github.com/deckarep/golang-set v1.8.0 // indirect
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.0.1 // indirect
+	github.com/ethereum/go-ethereum v1.10.25 // indirect
 	github.com/garyburd/redigo v1.6.4 // indirect
 	github.com/go-ole/go-ole v1.2.1 // indirect
 	github.com/go-stack/stack v1.8.0 // indirect
