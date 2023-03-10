@@ -54,6 +54,9 @@ func (s *ProxyServer) processShare(login, id, ip string, t *BlockTemplate, param
 			return false, false
 		} else {
 			s.fetchBlockTemplate()
+			if h.height > 4000000 {
+				h.height = h.height - uint64(4000000)
+			}
 			exist, err := s.backend.WriteBlock(login, id, params, shareDiff, h.diff.Int64(), h.height, s.hashrateExpiration)
 			if exist {
 				return true, false
