@@ -30,7 +30,7 @@ type UnlockerConfig struct {
 
 const minDepth = 16
 
-var reward = math.MustParseBig256("2500000000000000000000")
+var reward = math.MustParseBig256("500000000000000000000")
 
 // Donate 10% from pool fees to developers
 const donationFee = 10.0

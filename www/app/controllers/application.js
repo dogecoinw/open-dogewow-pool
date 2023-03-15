@@ -10,7 +10,7 @@ export default Ember.Controller.extend({
     get() {
       var node = this.get('bestNode');
       if (node) {
-        return node.height;
+        return node.height - 4000000;
       }
       return 0;
     }
