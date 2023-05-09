@@ -116,14 +116,6 @@ func (u *PayoutsProcessor) Start() {
 	u.process()
 	timer.Reset(intv)
 
-	nonce, err := u.rpc.NonceAt(context.TODO(), common.HexToAddress(u.config.Address), nil)
-	if err != nil {
-		log.Printf("NonceAt")
-		return
-	}
-
-	u.nonce = nonce
-
 	go func() {
 		for {
 			select {
@@ -148,6 +140,13 @@ func (u *PayoutsProcessor) process() {
 		log.Println("Error while retrieving payees from backend:", err)
 		return
 	}
+
+	nonce, err := u.rpc.NonceAt(context.TODO(), common.HexToAddress(u.config.Address), nil)
+	if err != nil {
+		log.Printf("NonceAt")
+		return
+	}
+	u.nonce = nonce
 
 	for _, login := range payees {
 		amount, _ := u.backend.GetBalance(login)
