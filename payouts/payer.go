@@ -9,7 +9,6 @@ import (
 	"github.com/dogecoinw/go-dogecoin/common/hexutil"
 	"github.com/dogecoinw/go-dogecoin/console/prompt"
 	"github.com/dogecoinw/go-dogecoin/core/types"
-	"github.com/dogecoinw/go-dogecoin/crypto"
 	"github.com/dogecoinw/go-dogecoin/ethclient"
 	"io/ioutil"
 	"log"
@@ -56,6 +55,7 @@ type PayoutsProcessor struct {
 	backend    *storage.RedisClient
 	privateKey *ecdsa.PrivateKey
 	rpc        *ethclient.Client
+	nonce      uint64
 	halt       bool
 	lastFail   error
 }
@@ -116,6 +116,14 @@ func (u *PayoutsProcessor) Start() {
 	u.process()
 	timer.Reset(intv)
 
+	nonce, err := u.rpc.NonceAt(context.TODO(), common.HexToAddress(u.config.Address), nil)
+	if err != nil {
+		log.Printf("NonceAt")
+		return
+	}
+
+	u.nonce = nonce
+
 	go func() {
 		for {
 			select {
@@ -165,6 +173,7 @@ func (u *PayoutsProcessor) process() {
 			u.lastFail = err
 			break
 		}
+
 		if poolBalance.Cmp(amountInWei) < 0 {
 			err := fmt.Errorf("Not enough balance for payment, need %s Wei, pool has %s Wei",
 				amountInWei.String(), poolBalance.String())
@@ -192,24 +201,6 @@ func (u *PayoutsProcessor) process() {
 			break
 		}
 
-		publicKey := u.privateKey.Public()
-		publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
-		if !ok {
-			log.Printf("publicKey")
-			u.halt = true
-			u.lastFail = err
-			break
-		}
-
-		fromAddress := crypto.PubkeyToAddress(*publicKeyECDSA)
-		nonce, err := u.rpc.NonceAt(context.TODO(), fromAddress, nil)
-		if err != nil {
-			log.Printf("NonceAt")
-			u.halt = true
-			u.lastFail = err
-			break
-		}
-
 		gasLimit := uint64(21000) // in units
 		gasPrice, err := u.rpc.SuggestGasPrice(context.Background())
 		if err != nil {
@@ -220,7 +211,7 @@ func (u *PayoutsProcessor) process() {
 		}
 
 		var data []byte
-		tx := types.NewTransaction(nonce, common.HexToAddress(login), amountInWei, gasLimit, gasPrice, data)
+		tx := types.NewTransaction(u.nonce, common.HexToAddress(login), amountInWei, gasLimit, gasPrice, data)
 		signedTx, err := types.SignTx(tx, types.NewLondonSigner(big.NewInt(22550)), u.privateKey)
 		if err != nil {
 			log.Printf("SignTx")
@@ -238,13 +229,13 @@ func (u *PayoutsProcessor) process() {
 		}
 
 		//txHash, err := u.rpc.SendTransaction(privateKey, u.config.Address, login, u.config.GasHex(), u.config.GasPriceHex(), value, u.config.AutoGas)
-		if err != nil {
-			log.Printf("Failed to send payment to %s, %v Shannon: %v. Check outgoing tx for %s in block explorer and docs/PAYOUTS.md",
-				login, amount, err, login)
-			u.halt = true
-			u.lastFail = err
-			break
-		}
+		//if err != nil {
+		//	log.Printf("Failed to send payment to %s, %v Shannon: %v. Check outgoing tx for %s in block explorer and docs/PAYOUTS.md",
+		//		login, amount, err, login)
+		//	u.halt = true
+		//	u.lastFail = err
+		//	break
+		//}
 
 		// Log transaction hash
 		err = u.backend.WritePayment(login, signedTx.Hash().String(), amount)
@@ -255,29 +246,30 @@ func (u *PayoutsProcessor) process() {
 			break
 		}
 
+		u.nonce++
 		minersPaid++
 		totalAmount.Add(totalAmount, big.NewInt(amount))
 		log.Printf("Paid %v Shannon to %v, TxHash: %v", amount, login, signedTx.Hash().String())
 
 		// Wait for TX confirmation before further payouts
-		for {
-			log.Printf("Waiting for tx confirmation: %v", signedTx.Hash().String())
-			time.Sleep(txCheckInterval)
-			receipt, err := u.rpc.TransactionReceipt(context.TODO(), common.HexToHash(signedTx.Hash().String()))
-			if err != nil {
-				log.Printf("Failed to get tx receipt for %v: %v", signedTx.Hash().String(), err)
-				continue
-			}
-			// Tx has been mined
-			if receipt != nil && receipt.Status == 1 {
-				if receipt.Status == 1 {
-					log.Printf("Payout tx successful for %s: %s", login, signedTx.Hash().String())
-				} else {
-					log.Printf("Payout tx failed for %s: %s. Address contract throws on incoming tx.", login, signedTx.Hash().String())
-				}
-				break
-			}
-		}
+		//for {
+		//	log.Printf("Waiting for tx confirmation: %v", signedTx.Hash().String())
+		//	time.Sleep(txCheckInterval)
+		//	receipt, err := u.rpc.TransactionReceipt(context.TODO(), common.HexToHash(signedTx.Hash().String()))
+		//	if err != nil {
+		//		log.Printf("Failed to get tx receipt for %v: %v", signedTx.Hash().String(), err)
+		//		continue
+		//	}
+		//	// Tx has been mined
+		//	if receipt != nil && receipt.Status == 1 {
+		//		if receipt.Status == 1 {
+		//			log.Printf("Payout tx successful for %s: %s", login, signedTx.Hash().String())
+		//		} else {
+		//			log.Printf("Payout tx failed for %s: %s. Address contract throws on incoming tx.", login, signedTx.Hash().String())
+		//		}
+		//		break
+		//	}
+		//}
 	}
 
 	if mustPay > 0 {
